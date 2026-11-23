@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Levish's Food Hub - Order Online</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Separate CSS Link -->
+    <link rel="stylesheet" href="restro.css">
+</head>
+<body>
+
+    <!-- 1. Initial Mobile Login Screen (App starts here) -->
+    <div id="login-screen" class="login-screen">
+        <div class="login-card">
+            <div class="brand-title">
+                <i class="fa-solid fa-utensils"></i> Levish's Food Hub
+            </div>
+            <h2>Welcome!</h2>
+            <p>Enter your 10-digit mobile number to view the menu</p>
+            
+            <form onsubmit="handleMobileLogin(event)">
+                <div class="mobile-input-group">
+                    <span class="country-code">+91</span>
+                    <input type="tel" id="mobile-number" placeholder="Enter mobile number" pattern="[0-9]{10}" maxlength="10" required>
+                </div>
+                <button type="submit" class="primary-btn">Continue to Menu</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. Main Food App (Hidden until login) -->
+    <div id="app-container" style="display: none;">
+        
+        <!-- Header Navigation Bar -->
+        <header class="navbar">
+            <div class="logo">
+                <i class="fa-solid fa-utensils"></i> Levish's Food Hub
+            </div>
+            <nav class="nav-links" id="nav-menu">
+                <a href="#home" onclick="closeNav()">Home</a>
+                <a href="#menu" onclick="closeNav()">Menu</a>
+                <a href="#about" onclick="closeNav()">About Us</a>
+                <a href="#contact" onclick="closeNav()">Contact</a>
+            </nav>
+            <div class="header-right">
+                <button class="cart-btn" onclick="toggleCart()">
+                    <i class="fa-solid fa-cart-shopping"></i> Cart (<span id="cart-count">0</span>)
+                </button>
+                <button class="logout-btn" onclick="handleLogout()">Logout</button>
+                <button class="mobile-menu-btn" onclick="toggleMobileNav()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Hero Banner -->
+        <section id="home" class="hero-section">
+            <div class="hero-text">
+                <h1>Hungry? We've Got You Covered!</h1>
+                <p>Order fresh, delicious gourmet food directly to your doorstep.</p>
+                <a href="#menu" class="cta-btn">Explore 20+ Dishes</a>
+            </div>
+        </section>
+
+        <!-- Category Filters -->
+        <section class="category-section container">
+            <h2>Categories</h2>
+            <div class="category-grid">
+                <button class="cat-btn active" onclick="filterCategory(event, 'all')">All Dishes</button>
+                <button class="cat-btn" onclick="filterCategory(event, 'starter')">Starters</button>
+                <button class="cat-btn" onclick="filterCategory(event, 'main')">Main Course</button>
+                <button class="cat-btn" onclick="filterCategory(event, 'dessert')">Desserts</button>
+                <button class="cat-btn" onclick="filterCategory(event, 'beverage')">Beverages</button>
+            </div>
+        </section>
+
+        <!-- 20 Menu Items Grid -->
+        <section id="menu" class="menu-section container">
+            <h2 class="section-title">Our Special Menu</h2>
+            <div class="menu-grid" id="menu-container"></div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="container about-section">
+            <h2>About Levish's Food Hub</h2>
+            <p>At Levish's Food Hub, we take pride in serving high-quality, authentic dishes prepared by master chefs with fresh ingredients and royal spices.</p>
+        </section>
+
+        <!-- Footer -->
+        <footer id="contact" class="footer">
+            <div class="footer-grid container">
+                <div>
+                    <h3>Levish's Food Hub</h3>
+                    <p>Delicious food, fast delivery.</p>
+                </div>
+                <div>
+                    <h4>Opening Hours</h4>
+                    <p>Mon - Sun: 10:00 AM - 11:30 PM</p>
+                </div>
+                <div>
+                    <h4>Contact Us</h4>
+                    <p><i class="fa-solid fa-location-dot"></i> park spring society lohegoan</p>
+                    <p><i class="fa-solid fa-phone"></i> +91 9699314202</p>
+                </div>
+            </div>
+            <p class="copyright">&copy; 2026 Levish's Food Hub. All rights reserved.</p>
+        </footer>
+
+        <!-- Cart Sidebar Drawer -->
+        <div id="cart-sidebar" class="cart-sidebar">
+            <div class="cart-header">
+                <h3>Your Food Cart</h3>
+                <span class="close-btn" onclick="toggleCart()">&times;</span>
+            </div>
+            <div class="cart-items" id="cart-items"></div>
+            <div class="cart-footer">
+                <div class="cart-total">Total Amount: ₹<span id="cart-total-price">0</span></div>
+                <button class="checkout-btn" onclick="openPaymentModal()">Proceed to Payment</button>
+            </div>
+        </div>
+
+        <!-- Payment Options Modal -->
+        <div id="payment-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closePaymentModal()">&times;</span>
+                <h2>Select Payment Method</h2>
+                <div class="payment-options">
+                    <label class="payment-option">
+                        <input type="radio" name="payment" value="upi" checked>
+                        <span><i class="fa-solid fa-mobile-screen-button"></i> UPI (GPay, PhonePe, Paytm)</span>
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="payment" value="card">
+                        <span><i class="fa-regular fa-credit-card"></i> Credit / Debit Card</span>
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="payment" value="cod">
+                        <span><i class="fa-solid fa-hand-holding-dollar"></i> Cash on Delivery (COD)</span>
+                    </label>
+                </div>
+                <button class="primary-btn" onclick="placeOrder()">Pay & Confirm Order</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- App JavaScript -->
+    <script>
+        const menuItems = [
+            { id: 1, name: "Paneer Butter Masala", category: "main", price: 280, rating: "4.8", img: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=500", desc: "Rich & creamy paneer gravy cooked in butter." },
+            { id: 2, name: "Chicken Biryani", category: "main", price: 340, rating: "4.9", img: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500", desc: "Aromatic basmati rice cooked with chicken and spices." },
+            { id: 3, name: "Crispy Spring Rolls", category: "starter", price: 180, rating: "4.5", img: "https://images.unsplash.com/photo-1544025162-d76694265947?w=500", desc: "Deep-fried rolls stuffed with fresh spiced veggies." },
+            { id: 4, name: "Margherita Pizza", category: "main", price: 320, rating: "4.7", img: "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=500", desc: "Classic fresh mozzarella and rich tomato sauce." },
+            { id: 5, name: "Garlic Naan", category: "main", price: 60, rating: "4.6", img: "https://images.unsplash.com/photo-1626074353765-517a681e40be?w=500", desc: "Traditional Indian flatbread garnished with garlic." },
+            { id: 6, name: "Chilli Paneer Dry", category: "starter", price: 240, rating: "4.6", img: "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=500", desc: "Cottage cheese tossed with bell peppers & sauce." },
+            { id: 7, name: "Chicken Wings", category: "starter", price: 290, rating: "4.8", img: "https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=500", desc: "Juicy chicken wings tossed in rich BBQ glaze." },
+            { id: 8, name: "Dal Makhani", category: "main", price: 230, rating: "4.9", img: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=500", desc: "Slow-cooked black lentils in creamy butter sauce." },
+            { id: 9, name: "Veg Hakka Noodles", category: "main", price: 210, rating: "4.4", img: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=500", desc: "Stir-fried noodles with crisp fresh vegetables." },
+            { id: 10, name: "Gulab Jamun", category: "dessert", price: 90, rating: "4.9", img: "https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=500", desc: "Soft milk balls dipped in sweet cardamom syrup." },
+            { id: 11, name: "Chocolate Lava Cake", category: "dessert", price: 150, rating: "4.8", img: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=500", desc: "Warm cake with molten chocolate center." },
+            { id: 12, name: "Mango Lassi", category: "beverage", price: 110, rating: "4.7", img: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=500", desc: "Creamy yogurt drink blended with mangoes." },
+            { id: 13, name: "Cold Coffee", category: "beverage", price: 140, rating: "4.6", img: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=500", desc: "Chilled espresso blended with milk & ice cream." },
+            { id: 14, name: "Tandoori Chicken", category: "starter", price: 310, rating: "4.8", img: "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=500", desc: "Chicken roasted in traditional tandoor spices." },
+            { id: 15, name: "Mutton Rogan Josh", category: "main", price: 420, rating: "4.9", img: "https://images.unsplash.com/photo-1545247181-516773cae754?w=500", desc: "Tender lamb cooked in aromatic gravy." },
+            { id: 16, name: "Veg Momos", category: "starter", price: 150, rating: "4.5", img: "https://images.unsplash.com/photo-1625220194771-7ebdea0b70b9?w=500", desc: "Steamed dumplings stuffed with chopped veggies." },
+            { id: 17, name: "French Fries", category: "starter", price: 120, rating: "4.3", img: "https://images.unsplash.com/photo-1576107232684-1279f390859f?w=500", desc: "Golden salted crispy potato fries." },
+            { id: 18, name: "Brownie Ice Cream", category: "dessert", price: 170, rating: "4.9", img: "https://images.unsplash.com/photo-1564355808539-22fda35bed7e?w=500", desc: "Hot chocolate brownie topped with vanilla ice cream." },
+            { id: 19, name: "Fresh Mojito", category: "beverage", price: 120, rating: "4.5", img: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500", desc: "Mint and lime mocktail topped with soda." },
+            { id: 20, name: "Masala Chai", category: "beverage", price: 50, rating: "4.8", img: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=500", desc: "Indian tea brewed with ginger and cardamom." }
+        ];
+
+        let cart = [];
+
+        function handleMobileLogin(e) {
+            e.preventDefault();
+            const mobile = document.getElementById('mobile-number').value;
+            if(mobile.length === 10) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('app-container').style.display = 'block';
+                renderMenu(menuItems);
+                updateCart();
+            } else {
+                alert("Please enter a valid 10-digit mobile number!");
+            }
+        }
+
+        function handleLogout() {
+            document.getElementById('app-container').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('mobile-number').value = '';
+            cart = [];
+            updateCart();
+        }
+
+        function renderMenu(items) {
+            const container = document.getElementById('menu-container');
+            container.innerHTML = items.map(item => `
+                <div class="food-card">
+                    <img src="${item.img}" alt="${item.name}">
+                    <div class="food-info">
+                        <div class="food-header">
+                            <span class="food-title">${item.name}</span>
+                            <span class="food-rating"><i class="fa-solid fa-star"></i> ${item.rating}</span>
+                        </div>
+                        <p class="food-desc">${item.desc}</p>
+                        <div class="food-footer">
+                            <span class="food-price">₹${item.price}</span>
+                            <button class="add-btn" onclick="addToCart(${item.id})"><i class="fa-solid fa-plus"></i> Add</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterCategory(e, category) {
+            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            if(category === 'all') renderMenu(menuItems);
+            else renderMenu(menuItems.filter(i => i.category === category));
+        }
+
+        function addToCart(id) {
+            const item = menuItems.find(i => i.id === id);
+            const existing = cart.find(i => i.id === id);
+            if(existing) existing.qty += 1;
+            else cart.push({ ...item, qty: 1 });
+            updateCart();
+        }
+
+        function updateCart() {
+            document.getElementById('cart-count').innerText = cart.reduce((acc, i) => acc + i.qty, 0);
+            const itemsContainer = document.getElementById('cart-items');
+            if(cart.length === 0) {
+                itemsContainer.innerHTML = `<p style="text-align:center; color:#888; margin-top:20px;">Your cart is empty.</p>`;
+                document.getElementById('cart-total-price').innerText = "0";
+                return;
+            }
+
+            let total = 0;
+            itemsContainer.innerHTML = cart.map(item => {
+                total += item.price * item.qty;
+                return `
+                    <div class="cart-item">
+                        <div>
+                            <strong>${item.name}</strong>
+                            <div>₹${item.price} x ${item.qty}</div>
+                        </div>
+                        <div class="qty-controls">
+                            <button onclick="changeQty(${item.id}, -1)">-</button>
+                            <span>${item.qty}</span>
+                            <button onclick="changeQty(${item.id}, 1)">+</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('cart-total-price').innerText = total;
+        }
+
+        function changeQty(id, change) {
+            const item = cart.find(i => i.id === id);
+            if(item) {
+                item.qty += change;
+                if(item.qty <= 0) cart = cart.filter(i => i.id !== id);
+            }
+            updateCart();
+        }
+
+        function toggleCart() {
+            document.getElementById('cart-sidebar').classList.toggle('open');
+        }
+
+        function toggleMobileNav() {
+            document.getElementById('nav-menu').classList.toggle('active');
+        }
+
+        function closeNav() {
+            document.getElementById('nav-menu').classList.remove('active');
+        }
+
+        function openPaymentModal() {
+            if(cart.length === 0) return alert("Your cart is empty!");
+            toggleCart();
+            document.getElementById('payment-modal').style.display = 'flex';
+        }
+
+        function closePaymentModal() {
+            document.getElementById('payment-modal').style.display = 'none';
+        }
+
+        function placeOrder() {
+            alert("Thank you! Your order has been placed successfully.");
+            cart = [];
+            updateCart();
+            closePaymentModal();
+        }
+    </script>
+</body>
+</html>
